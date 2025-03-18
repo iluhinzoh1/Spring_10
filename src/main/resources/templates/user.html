@@ -7,7 +7,9 @@
 <center>
     <h1>Hello User!</h1>
 
-    <h1 th:text="${userShow}"></h1>
+    <th:block th:each="uS : ${userShow}">
+        <h3 th:text="${uS}"></h3>
+    </th:block>
     <input type="button" value="LOGOUT" onclick="window.location.href = '/login'">
 </center>
 

@@ -25,8 +25,7 @@ public class UserController {
     @GetMapping
     public String showUser(Principal principal, Model model) {
         User user = userService.findByUserName(principal.getName());
-        model.addAttribute("userShow", "id пользователя в " +
-                "списке = " + user.getId() + "  ваша роль в списке = " + user.getAuthorities());
+        model.addAttribute("userShow", user);
         return "user";
     }
 }
