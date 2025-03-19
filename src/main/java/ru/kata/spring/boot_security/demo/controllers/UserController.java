@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.services.UserServiceImp;
 
 import java.security.Principal;
 
@@ -15,16 +15,16 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private UserService userService;
+    private UserServiceImp userServiceImp;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserServiceImp userServiceImp) {
+        this.userServiceImp = userServiceImp;
     }
 
     @GetMapping
     public String showUser(Principal principal, Model model) {
-        User user = userService.findByUserName(principal.getName());
+        User user = userServiceImp.findByUserName(principal.getName());
         model.addAttribute("userShow", user);
         return "user";
     }

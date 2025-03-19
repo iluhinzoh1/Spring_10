@@ -5,14 +5,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
-import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.services.RoleServiceImp;
+import ru.kata.spring.boot_security.demo.services.UserServiceImp;
 
 import java.security.Principal;
 import java.util.List;
@@ -21,21 +19,19 @@ import java.util.List;
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
-    private UserService userService;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UserServiceImp userServiceImp;
+    private final RoleServiceImp roleServiceImp;
 
 
     @Autowired
-    public AdminController(UserService userService, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AdminController(UserServiceImp userServiceImp, RoleServiceImp roleServiceImp) {
+        this.userServiceImp = userServiceImp;
+        this.roleServiceImp = roleServiceImp;
     }
 
     @GetMapping()
     public String Users(Model model) {
-        List<User> user = userService.findAllUsers();
+        List<User> user = userServiceImp.findAllUsers();
         model.addAttribute("allUsers", user);
         return "admin";
     }
@@ -43,36 +39,30 @@ public class AdminController {
     @GetMapping("addNewUser")
     public String saveUser(Model model) {
         model.addAttribute("save", new User());
-        model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("roles", roleServiceImp.getAllRoles());
         return "user-info";
     }
 
     @PostMapping("/saveUsers")
     public String saveUser(@ModelAttribute("save") User user) {
-        userService.saveUser(user);
+        userServiceImp.saveUser(user);
         return "redirect:/admin";
     }
 
     @GetMapping("/updateUser")
     public String updateUsers(@RequestParam(value = "username") String username, Model model) {
-        model.addAttribute("updateUserId", userService.findByUserName(username));
-        model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("updateUserId", userServiceImp.findByUserName(username));
+        model.addAttribute("roles", roleServiceImp.getAllRoles());
         return "update";
     }
 
     @PostMapping("updateUserById")
-    public String updateUserById(@ModelAttribute("updateUserId") User user,
-                                 @RequestParam(required = false) String newPassword, Principal principal) {
-        User existingUser = userService.findByUserName(user.getUsername());
-        if (existingUser == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        existingUser.setUsername(user.getUsername());
-        existingUser.setRoles(user.getRoles());
-        if (newPassword != null && !newPassword.isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(newPassword));
-        }
-        userService.updateUser(existingUser);
+    public String updateUserById(
+            @ModelAttribute("updateUserId") User user,
+            @RequestParam(value = "newPassword", required = false) String newPassword,
+            Principal principal) {
+        User existingUser = userServiceImp.findById(user.getId());
+        userServiceImp.updateUser(user, newPassword);
 
         if (principal.getName().equals(existingUser.getUsername())) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -90,7 +80,7 @@ public class AdminController {
 
     @GetMapping("deleteUser")
     public String deleteUserById(@RequestParam(value = "id") Long id) {
-        userService.deleteUser(id);
+        userServiceImp.deleteUser(id);
         return "redirect:/admin";
     }
 }

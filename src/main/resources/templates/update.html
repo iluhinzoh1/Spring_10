@@ -9,8 +9,8 @@
     <h1>Изменение пользователя</h1>
     <form th:action="@{/admin/updateUserById}" method="post" th:object="${updateUserId}">
         <input type="hidden" th:field="*{id}">
-        <label for="username">Username:</label>
-        <input type="text" id="username" th:field="*{username}" required>
+        <label for="email">Username:</label>
+        <input type="email" id="email" th:field="*{username}" required>
         <br><br>
         <label for="newPassword">New Password (оставить пустым, чтобы не менять пароль):</label>
         <br>
