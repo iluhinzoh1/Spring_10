@@ -7,6 +7,7 @@
             padding: 0;
             margin: 0;
         }
+
         /* Стиль для черной полосы */
         .top-bar {
             background-color: black;
@@ -15,29 +16,48 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-
+            display: flex;
         }
 
         /* Стиль для кнопки в полосе */
-        .top-bar button {
-            background-color: white;
-            color: black;
+        .top-bar .buttonLog input[type="button"] {
+            background-color: black;
+            color: #939393;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
         }
+
         /* Стиль для текста в полосе */
         .top-bar .text {
             font-size: 18px;
             font-weight: bold;
+            display: flex;
         }
+
+        .top-bar .text h4 {
+            margin: 0;
+            padding-right: 5px; /* Добавляем отступ между элементами */
+            font-weight: normal;
+        }
+
     </style>
 </head>
 <body>
 <!-- Черная полоса сверху -->
 <div class="top-bar">
-    <div class="text">Мой текст</div> <!-- Текст в полосе -->
-    <button>Кнопка</button> <!-- Кнопка в полосе -->
+    <th:block th:each="userShow : ${userShow}">
+        <div class="text">
+            <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
+                <h4>with roles:
+                    <span th:each="role : ${userShow.authorities}"
+                          th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+                </h4>
+        </div>
+    </th:block>
+    <div class="buttonLog">
+        <input type="button" value="Logout" onclick="window.location.href = '/login'">
+    </div>
 </div>
 <center>
     <table border="1">
@@ -55,7 +75,7 @@
     </table>
     <br>
     <br>
-    <input type="button" value="LOGOUT" onclick="window.location.href = '/login'">
+
     <input type="button" value="ADD" onclick="window.location.href = '/admin/addNewUser'"/>
 
 </center>

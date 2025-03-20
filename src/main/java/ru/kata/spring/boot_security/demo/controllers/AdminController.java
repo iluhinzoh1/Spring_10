@@ -30,9 +30,11 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String Users(Model model) {
+    public String Users(Model model, Principal principal) {
         List<User> user = userServiceImp.findAllUsers();
         model.addAttribute("allUsers", user);
+        User user2 = userServiceImp.findByUserName(principal.getName());
+        model.addAttribute("userShow", user2);
         return "admin";
     }
 
@@ -83,4 +85,5 @@ public class AdminController {
         userServiceImp.deleteUser(id);
         return "redirect:/admin";
     }
+
 }
