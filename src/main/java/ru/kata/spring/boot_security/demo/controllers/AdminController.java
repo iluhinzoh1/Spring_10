@@ -65,11 +65,13 @@ public class AdminController {
             Principal principal) {
         User existingUser = userServiceImp.findById(user.getId());
         userServiceImp.updateUser(user, newPassword);
-
         if (principal.getName().equals(existingUser.getUsername())) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     existingUser, existingUser.getPassword(), existingUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        if (!principal.getName().equals(existingUser.getUsername())) {
+            return "redirect:/admin";
         }
         if (existingUser.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
             return "redirect:/admin";
