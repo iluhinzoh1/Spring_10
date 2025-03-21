@@ -43,7 +43,69 @@
             padding-right: 5px; /* Добавляем отступ между элементами */
             font-weight: normal;
         }
+        /* Скрываем радиокнопки */
+        input[type="radio"] {
+            display: none;
+        }
 
+        /* Контейнер для вкладок и контента */
+        .tabs-container {
+            display: flex;
+            height: 100vh; /* Занимает всю высоту экрана */
+        }
+
+        /* Стили для вкладок */
+        .tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 300px;
+            background-color: #f8f9fa; /* Цвет под вкладками */
+            border-right: 1px solid #ddd;
+            margin-top: 25px;
+        }
+
+        .tabs li {
+            display: block;
+        }
+
+        .tabs label {
+            display: block;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+            background-color: #e9ecef;
+            color: #000;
+        }
+
+        .tabs label:hover {
+            background-color: #ddd;
+        }
+
+        /* Стиль активной вкладки */
+        #tab1:checked ~ .tabs li:first-child label,
+        #tab2:checked ~ .tabs li:nth-child(2) label {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Контейнер для контента */
+        .tab-content {
+            flex: 1;
+            padding: 25px;
+            background-color: #e3e0e0; /* Цвет области справа от вкладок */
+        }
+
+        /* Скрываем все блоки контента */
+        .tab-panel {
+            display: none;
+        }
+
+        /* Показываем контент активной вкладки */
+        #tab1:checked ~ .tab-content #tab-panel1,
+        #tab2:checked ~ .tab-content #tab-panel2 {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -52,35 +114,61 @@
     <th:block th:each="userShow : ${userShow}">
         <div class="text">
             <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
-                <h4>with roles:
-                    <span th:each="role : ${userShow.authorities}"
-                          th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
-                </h4>
+            <h4>with roles:
+                <span th:each="role : ${userShow.authorities}"
+                      th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+            </h4>
         </div>
     </th:block>
     <div class="buttonLog">
         <input type="button" value="Logout" onclick="window.location.href = '/login'">
     </div>
 </div>
-<center>
-    <table border="1">
-        <caption> Таблица всех пользователей</caption>
-        <th:block th:each="msg : ${allUsers}">
-            <tr>
-                <td>
-                    <h3 th:text="${msg}"></h3>
-                    <center><a th:href="@{/admin/updateUser(username=${msg.username})}" th:text="UPDATE"> user </a>
-                        <a th:href="@{/admin/deleteUser(id=${msg.getId()})}" th:text="DELETE"> user </a>
-                    </center>
-                </td>
-            <tr>
-        </th:block>
-    </table>
-    <br>
-    <br>
+<!-- Nav tabs -->
+<div class="tabs-container">
+    <!-- Радиокнопки и лейблы -->
+    <input type="radio" id="tab1" name="tabs" checked>
+    <input type="radio" id="tab2" name="tabs">
 
-    <input type="button" value="ADD" onclick="window.location.href = '/admin/addNewUser'"/>
+    <!-- Вкладки -->
+    <ul class="tabs">
+        <li>
+            <label for="tab1">Admin</label>
+        </li>
+        <li>
+            <label for="tab2">User</label>
+        </li>
+    </ul>
 
-</center>
+    <!-- Контент вкладок -->
+    <div class="tab-content">
+        <div id="tab-panel1" class="tab-panel">
+            <h1>Admin panel</h1>
+        </div>
+        <div id="tab-panel2" class="tab-panel">
+            <h1>User information-page</h1>
+        </div>
+    </div>
+</div>
+<!--<center>-->
+<!--    <table border="1">-->
+<!--        <caption> Таблица всех пользователей</caption>-->
+<!--        <th:block th:each="msg : ${allUsers}">-->
+<!--            <tr>-->
+<!--                <td>-->
+<!--                    <h3 th:text="${msg}"></h3>-->
+<!--                    <center><a th:href="@{/admin/updateUser(username=${msg.username})}" th:text="UPDATE"> user </a>-->
+<!--                        <a th:href="@{/admin/deleteUser(id=${msg.getId()})}" th:text="DELETE"> user </a>-->
+<!--                    </center>-->
+<!--                </td>-->
+<!--            <tr>-->
+<!--        </th:block>-->
+<!--    </table>-->
+<!--    <br>-->
+<!--    <br>-->
+
+<!--    <input type="button" value="ADD" onclick="window.location.href = '/admin/addNewUser'"/>-->
+
+<!--</center>-->
 </body>
 </html>
