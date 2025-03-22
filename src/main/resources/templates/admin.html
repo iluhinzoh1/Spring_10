@@ -11,7 +11,6 @@
             margin: 0;
         }
 
-        /* Стиль для черной полосы */
         .top-bar {
             background-color: black;
             color: white;
@@ -19,10 +18,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            display: flex;
         }
 
-        /* Стиль для кнопки в полосе */
         .top-bar .buttonLog input[type="button"] {
             background-color: black;
             color: #939393;
@@ -31,7 +28,6 @@
             cursor: pointer;
         }
 
-        /* Стиль для текста в полосе */
         .top-bar .text {
             font-size: 18px;
             font-weight: bold;
@@ -40,27 +36,25 @@
 
         .top-bar .text h4 {
             margin: 0;
-            padding-right: 5px; /* Добавляем отступ между элементами */
+            padding-right: 5px;
             font-weight: normal;
         }
-        /* Скрываем радиокнопки */
+
         input[type="radio"] {
             display: none;
         }
 
-        /* Контейнер для вкладок и контента */
         .tabs-container {
             display: flex;
-            height: 100vh; /* Занимает всю высоту экрана */
+            height: 100vh;
         }
 
-        /* Стили для вкладок */
         .tabs {
             list-style: none;
             padding: 0;
             margin: 0;
             width: 300px;
-            background-color: #f8f9fa; /* Цвет под вкладками */
+            background-color: #f8f9fa;
             border-right: 1px solid #ddd;
             margin-top: 25px;
         }
@@ -82,30 +76,79 @@
             background-color: #ddd;
         }
 
-        /* Стиль активной вкладки */
         #tab1:checked ~ .tabs li:first-child label,
         #tab2:checked ~ .tabs li:nth-child(2) label {
             background-color: #007bff;
             color: white;
         }
 
-        /* Контейнер для контента */
         .tab-content {
             flex: 1;
             padding: 25px;
-            background-color: #e3e0e0; /* Цвет области справа от вкладок */
+            background-color: #e3e0e0;
         }
 
-        /* Скрываем все блоки контента */
         .tab-panel {
             display: none;
         }
 
-        /* Показываем контент активной вкладки */
         #tab1:checked ~ .tab-content #tab-panel1,
         #tab2:checked ~ .tab-content #tab-panel2 {
             display: block;
         }
+
+        /* Стили для внутренних вкладок */
+        .inner-tabs-container {
+            margin-top: 20px;
+        }
+
+        .inner-tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .inner-tabs li {
+            margin-right: 10px;
+        }
+
+        .inner-tabs input[type="radio"]:checked + label {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+        }
+
+        .inner-tabs label {
+            display: block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .inner-tabs label:hover {
+            background-color: #ddd;
+        }
+
+        .inner-tab-content {
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .inner-tab-panel {
+            display: none;
+        }
+
+        #inner-tab1:checked ~ .inner-tab-content #inner-tab-panel1,
+        #inner-tab2:checked ~ .inner-tab-content #inner-tab-panel2 {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -144,12 +187,68 @@
     <div class="tab-content">
         <div id="tab-panel1" class="tab-panel">
             <h1>Admin panel</h1>
+            <div class="inner-tabs-container">
+                <!-- Радиокнопки для внутренних вкладок -->
+                <input type="radio" id="inner-tab1" name="inner-tabs" checked>
+                <input type="radio" id="inner-tab2" name="inner-tabs">
+
+                <!-- Внутренние вкладки -->
+                <ul class="inner-tabs">
+                    <li>
+                        <label for="inner-tab1">Users table</label>
+                    </li>
+                    <li>
+                        <label for="inner-tab2">New User</label>
+                    </li>
+                </ul>
+
+                <!-- Контент внутренних вкладок -->
+                <div class="inner-tab-content">
+                    <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tbody>
+                        <!-- Этот тег генерирует строки для каждого пользователя -->
+                        <tr th:each="user : ${allUsers}">
+                            <!-- ID пользователя -->
+                            <th scope="row" th:text="${user.id}"></th>
+
+                            <!-- Email пользователя -->
+                            <td th:text="${user.username}"></td>
+
+                            <!-- Роль пользователя -->
+                            <td span th:text="${#strings.replace(user.authorities, 'ROLE_', '')} + ' '"></span></td>
+
+                            <!-- Кнопка "Редактировать" с динамической ссылкой -->
+                            <td><a th:href="@{/update/{id}(id=${user.id})}" class="btn btn-warning btn-sm">Edit</a></td>
+
+                            <!-- Кнопка "Удалить" с динамической ссылкой -->
+                            <td><a th:href="@{/delete/{id}(id=${user.id})}" class="btn btn-danger btn-sm">Delete</a></td>
+                        </tr>
+                        </tbody>
+                    </tbody>
+                </table>
+                    <div id="inner-tab-panel2" class="inner-tab-panel">
+                        <h2>New User</h2>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="tab-panel2" class="tab-panel">
             <h1>User information-page</h1>
         </div>
     </div>
 </div>
+
 <!--<center>-->
 <!--    <table border="1">-->
 <!--        <caption> Таблица всех пользователей</caption>-->
