@@ -149,6 +149,35 @@
             display: block;
         }
 
+        .modal {
+            display: none; /* По умолчанию скрыто */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
+        }
+
+        /* Чекбокс, который будет управлять показом */
+        #modal-toggle {
+            display: none;
+        }
+
+        /* Когда чекбокс активен, показываем окно */
+        #modal-toggle:checked + .modal {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -206,6 +235,7 @@
                 <div class="inner-tab-content">
                     <table class="table table-hover">
                     <thead>
+                    <h2 style="font-weight: normal">All users</h2>
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Email</th>
@@ -219,7 +249,7 @@
                         <!-- Этот тег генерирует строки для каждого пользователя -->
                         <tr th:each="user : ${allUsers}">
                             <!-- ID пользователя -->
-                            <th scope="row" th:text="${user.id}"></th>
+                            <td th:text="${user.id}"></td>
 
                             <!-- Email пользователя -->
                             <td th:text="${user.username}"></td>
@@ -228,10 +258,27 @@
                             <td span th:text="${#strings.replace(user.authorities, 'ROLE_', '')} + ' '"></span></td>
 
                             <!-- Кнопка "Редактировать" с динамической ссылкой -->
-                            <td><a th:href="@{/update/{id}(id=${user.id})}" class="btn btn-warning btn-sm">Edit</a></td>
-
+                            <td>
+                                <!-- Кнопка открытия -->
+                                <label for="modal-toggle" class="btn btn-warning btn-sm"
+                                a th:href="@{/admin/updateUser(username=${user.username})}" th:text="Edit"></label></a>
+                                <!-- Чекбокс для управления модальным окном -->
+                                <input type="checkbox" id="modal-toggle">
+                                <!-- Модальное окно -->
+                                <div class="modal">
+                                    <div class="modal-content">
+                                        <label for="formControlInput" class="form-label"></label>
+                                        <input type="text" class="form-control" id="formControlInput" readonly th:value="${user.id}">
+                                        <p>Без JS</p>
+                                        <!-- Кнопка закрытия (убирает галочку) -->
+                                        <label for="modal-toggle" class="btn">Закрыть</label>
+                                    </div>
+                                </div>
+                            </td>
                             <!-- Кнопка "Удалить" с динамической ссылкой -->
-                            <td><a th:href="@{/delete/{id}(id=${user.id})}" class="btn btn-danger btn-sm">Delete</a></td>
+                            <td>
+                                <a th:href="@{/delete/{id}(id=${user.id})}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
                         </tr>
                         </tbody>
                     </tbody>

@@ -56,7 +56,7 @@ public class AdminController {
     public String updateUsers(@RequestParam(value = "username") String username, Model model) {
         model.addAttribute("updateUserId", userServiceImp.findByUserName(username));
         model.addAttribute("roles", roleServiceImp.getAllRoles());
-        return "update";
+        return "admin";
     }
 
     @PostMapping("updateUserById")
