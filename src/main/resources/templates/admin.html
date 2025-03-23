@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <style>
         body, html {
@@ -149,33 +154,16 @@
             display: block;
         }
 
+        /* Когда чекбокс активен, показываем окно */
+        #modal-toggle:checked + .modal {
+            display: block;
+        }
+
         .modal {
-            display: none; /* По умолчанию скрыто */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 300px;
-            text-align: center;
-        }
-
-        /* Чекбокс, который будет управлять показом */
-        #modal-toggle {
             display: none;
         }
 
-        /* Когда чекбокс активен, показываем окно */
-        #modal-toggle:checked + .modal {
+        .modal.show {
             display: block;
         }
     </style>
@@ -234,17 +222,16 @@
                 <!-- Контент внутренних вкладок -->
                 <div class="inner-tab-content">
                     <table class="table table-hover">
-                    <thead>
-                    <h2 style="font-weight: normal">All users</h2>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                        <thead>
+                        <h2 style="font-weight: normal">All users</h2>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
                         <tbody>
                         <!-- Этот тег генерирует строки для каждого пользователя -->
                         <tr th:each="user : ${allUsers}">
@@ -255,34 +242,69 @@
                             <td th:text="${user.username}"></td>
 
                             <!-- Роль пользователя -->
-                            <td span th:text="${#strings.replace(user.authorities, 'ROLE_', '')} + ' '"></span></td>
-
-                            <!-- Кнопка "Редактировать" с динамической ссылкой -->
                             <td>
-                                <!-- Кнопка открытия -->
-                                <label for="modal-toggle" class="btn btn-warning btn-sm"
-                                a th:href="@{/admin/updateUser(username=${user.username})}" th:text="Edit"></label></a>
-                                <!-- Чекбокс для управления модальным окном -->
-                                <input type="checkbox" id="modal-toggle">
-                                <!-- Модальное окно -->
-                                <div class="modal">
-                                    <div class="modal-content">
-                                        <label for="formControlInput" class="form-label"></label>
-                                        <input type="text" class="form-control" id="formControlInput" readonly th:value="${user.id}">
-                                        <p>Без JS</p>
-                                        <!-- Кнопка закрытия (убирает галочку) -->
-                                        <label for="modal-toggle" class="btn">Закрыть</label>
+                                    <span th:each="role : ${user.authorities}"
+                                          th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+                            </td>
+
+                            <td>
+                                <form th:action="@{/admin}" method="get">
+                                    <input type="hidden" name="username" th:value="${user.username}" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Edit</button>
+                                </form>
+
+                                <div class="modal fade" th:id="${user.id}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" th:classappend="${openModal} ? 'show' : ''">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <!-- Заголовок модального окна -->
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel">Edit User</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <!-- Содержимое модального окна -->
+                                            <div class="modal-body">
+                                                <form th:action="@{/admin/updateUserById}" method="post" th:object="${updateUserId}">
+                                                    <input type="hidden" th:field="*{id}">
+
+                                                    <!-- Поле Email -->
+                                                    <div class="form-floating mb-3">
+                                                        <input type="email" class="form-control" id="email" th:field="*{username}" placeholder="Email">
+                                                        <label for="email">Email</label>
+                                                    </div>
+
+                                                    <!-- Поле Password -->
+                                                    <div class="form-floating mb-3">
+                                                        <label for="newPassword">New Password:</label>
+                                                        <input type="password" id="newPassword" name="newPassword" class="form-control">
+                                                    </div>
+
+                                                    <!-- Поле для ролей (если необходимо) -->
+                                                    <div class="form-floating mb-3">
+                                                        <select class="form-select" id="roles" th:field="*{roles}" multiple>
+                                                            <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                                                        </select>
+                                                        <label for="roles">Roles</label>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-primary">Update User</button>
+                                                </form>
+                                            </div>
+                                            <!-- Футер модального окна -->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
+
                             <!-- Кнопка "Удалить" с динамической ссылкой -->
                             <td>
-                                <a th:href="@{/delete/{id}(id=${user.id})}" class="btn btn-danger btn-sm">Delete</a>
+                                <a th:href="@{/admin/deleteUser/{id}(id=${user.id})}" class="btn btn-danger btn-sm">Delete</a>
                             </td>
                         </tr>
                         </tbody>
-                    </tbody>
-                </table>
+                    </table>
                     <div id="inner-tab-panel2" class="inner-tab-panel">
                         <h2>New User</h2>
                         <p></p>

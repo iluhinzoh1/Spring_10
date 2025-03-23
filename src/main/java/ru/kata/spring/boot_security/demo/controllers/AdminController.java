@@ -14,7 +14,6 @@ import ru.kata.spring.boot_security.demo.services.UserServiceImp;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,11 +30,27 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String Users(Model model, Principal principal) {
+    public String Users(Model model, Principal principal,@RequestParam(value = "username", required = false) String username) {
         List<User> user = userServiceImp.findAllUsers();
         model.addAttribute("allUsers", user);
         User user2 = userServiceImp.findByUserName(principal.getName());
         model.addAttribute("userShow", user2);
+        User updateUser;
+        if (username != null && !username.isEmpty()) {
+            updateUser = userServiceImp.findByUserName(username);
+            if (updateUser == null) {
+                updateUser = new User();
+            }
+        } else {
+            updateUser = new User();
+        }
+        model.addAttribute("updateUserId", updateUser);
+        model.addAttribute("roles", roleServiceImp.getAllRoles());
+        if (username != null && !username.isEmpty()) {
+            model.addAttribute("openModal", true);
+        } else {
+            model.addAttribute("openModal", false);
+        }
         return "admin";
     }
 
@@ -52,20 +67,21 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/updateUser")
-    public String updateUsers(@RequestParam(value = "username") String username, Model model) {
-        model.addAttribute("updateUserId", userServiceImp.findByUserName(username));
-        model.addAttribute("roles", roleServiceImp.getAllRoles());
-        return "admin";
-    }
+//    @GetMapping("/updateUser")
+//    public String updateUsers(@RequestParam(value = "username") String username, Model model) {
+//        model.addAttribute("updateUserId", userServiceImp.findByUserName(username));
+//        model.addAttribute("roles", roleServiceImp.getAllRoles());
+//        return "update";
+//    }
 
-    @PostMapping("updateUserById")
+    @PostMapping("/updateUserById")
     public String updateUserById(
             @ModelAttribute("updateUserId") User user,
             @RequestParam(value = "newPassword", required = false) String newPassword,
             Principal principal) {
         User existingUser = userServiceImp.findById(user.getId());
         userServiceImp.updateUser(user, newPassword);
+
         if (principal.getName().equals(existingUser.getUsername())) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     existingUser, existingUser.getPassword(), existingUser.getAuthorities());
@@ -88,5 +104,4 @@ public class AdminController {
         userServiceImp.deleteUser(id);
         return "redirect:/admin";
     }
-
 }
