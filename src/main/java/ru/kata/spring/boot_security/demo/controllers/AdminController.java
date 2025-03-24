@@ -35,7 +35,7 @@ public class AdminController {
         model.addAttribute("allUsers", user);
         User user2 = userServiceImp.findByUserName(principal.getName());
         if (user2 == null) {
-            return "redirect:/admin";
+            return "redirect:/login";
         }
         User updateUser;
         if (username != null && !username.isEmpty()) {
@@ -48,11 +48,6 @@ public class AdminController {
         }
         model.addAttribute("updateUserId", updateUser);
         model.addAttribute("roles", roleServiceImp.getAllRoles());
-        if (username != null && !username.isEmpty()) {
-            model.addAttribute("openModal", true);
-        } else {
-            model.addAttribute("openModal", false);
-        }
         model.addAttribute("userShow", user2);
         return "admin";
     }
@@ -70,21 +65,21 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-//    @GetMapping("/updateUser")
-//    public String updateUsers(@RequestParam(value = "username") String username, Model model) {
-//        model.addAttribute("updateUserId", userServiceImp.findByUserName(username));
-//        model.addAttribute("roles", roleServiceImp.getAllRoles());
-//        return "update";
-//    }
-
     @PostMapping("/updateUserById")
     public String updateUserById(
             @ModelAttribute("updateUserId") User user,
             @RequestParam(value = "newPassword", required = false) String newPassword,
             Principal principal) {
-        User existingUser = userServiceImp.findById(user.getId());
-        userServiceImp.updateUser(user, newPassword);
 
+        User existingUser = userServiceImp.findById(user.getId());
+        existingUser.setUsername(user.getUsername());
+        if (newPassword != null && !newPassword.isEmpty()) {
+            existingUser.setPassword(newPassword);
+        }
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(existingUser.getRoles());
+        }
+        userServiceImp.updateUser(user, newPassword);
         if (principal.getName().equals(existingUser.getUsername())) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     existingUser, existingUser.getPassword(), existingUser.getAuthorities());
