@@ -171,15 +171,13 @@
 <body>
 <!-- Черная полоса сверху -->
 <div class="top-bar">
-    <th:block th:each="userShow : ${userShow}">
-        <div class="text">
-            <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
-            <h4>with roles:
-                <span th:each="role : ${userShow.authorities}"
-                      th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
-            </h4>
-        </div>
-    </th:block>
+    <div class="text">
+        <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
+        <h4>with roles:
+            <span th:each="role : ${userShow.authorities}"
+                  th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+        </h4>
+    </div>
     <div class="buttonLog">
         <input type="button" value="Logout" onclick="window.location.href = '/login'">
     </div>
@@ -193,10 +191,10 @@
     <!-- Вкладки -->
     <ul class="tabs">
         <li>
-            <label for="tab1">Admin</label>
+            <label for="tab1" style="font-weight: bold">Admin</label>
         </li>
         <li>
-            <label for="tab2">User</label>
+            <label for="tab2" style="font-weight: bold">User</label>
         </li>
     </ul>
 
@@ -249,49 +247,63 @@
 
                             <td>
                                 <form th:action="@{/admin}" method="get">
-                                    <input type="hidden" name="username" th:value="${user.username}" />
+                                    <input type="hidden" name="username" th:value="${user.username}"/>
                                     <button type="submit" class="btn btn-primary btn-sm">Edit</button>
                                 </form>
 
-                                <div class="modal fade" th:id="${user.id}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" th:classappend="${openModal} ? 'show' : ''">
+                                <div class="modal fade" th:id="'modal-' + ${user.id}" tabindex="-1" aria-labelledby="modalLabel"
+                                     aria-hidden="true" th:classappend="${openModal} ? 'show' : ''">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <!-- Заголовок модального окна -->
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="modalLabel">Edit User</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <!-- Содержимое модального окна -->
                                             <div class="modal-body">
-                                                <form th:action="@{/admin/updateUserById}" method="post" th:object="${updateUserId}">
+                                                <form th:action="@{/admin/updateUserById}" method="post"
+                                                      th:object="${updateUserId}">
                                                     <input type="hidden" th:field="*{id}">
+
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" class="form-control" id="id"
+                                                               th:field="*{id}" readonly>
+                                                        <label for="id">ID</label>
+                                                    </div>
 
                                                     <!-- Поле Email -->
                                                     <div class="form-floating mb-3">
-                                                        <input type="email" class="form-control" id="email" th:field="*{username}" placeholder="Email">
+                                                        <input type="email" class="form-control" id="email"
+                                                               th:field="*{username}" placeholder="Email">
                                                         <label for="email">Email</label>
                                                     </div>
 
                                                     <!-- Поле Password -->
                                                     <div class="form-floating mb-3">
                                                         <label for="newPassword">New Password:</label>
-                                                        <input type="password" id="newPassword" name="newPassword" class="form-control">
+                                                        <input type="password" id="newPassword" name="newPassword"
+                                                               class="form-control">
                                                     </div>
 
                                                     <!-- Поле для ролей (если необходимо) -->
                                                     <div class="form-floating mb-3">
-                                                        <select class="form-select" id="roles" th:field="*{roles}" multiple>
-                                                            <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                                                        <select class="form-select" id="roles" th:field="*{roles}"
+                                                                multiple>
+                                                            <option th:each="role : ${roles}" th:value="${role.id}"
+                                                                    th:text="${role.name}"></option>
                                                         </select>
                                                         <label for="roles">Roles</label>
                                                     </div>
+                                                    <div class="modal-footer">
 
-                                                    <button type="submit" class="btn btn-primary">Update User</button>
+                                                        <button type="submit" class="btn btn-primary btn-sm">Update User</button>
+
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+
+                                                    </div>
                                                 </form>
-                                            </div>
-                                            <!-- Футер модального окна -->
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             </div>
                                         </div>
                                     </div>

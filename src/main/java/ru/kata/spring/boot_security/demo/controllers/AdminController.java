@@ -34,7 +34,9 @@ public class AdminController {
         List<User> user = userServiceImp.findAllUsers();
         model.addAttribute("allUsers", user);
         User user2 = userServiceImp.findByUserName(principal.getName());
-        model.addAttribute("userShow", user2);
+        if (user2 == null) {
+            return "redirect:/admin";
+        }
         User updateUser;
         if (username != null && !username.isEmpty()) {
             updateUser = userServiceImp.findByUserName(username);
@@ -51,6 +53,7 @@ public class AdminController {
         } else {
             model.addAttribute("openModal", false);
         }
+        model.addAttribute("userShow", user2);
         return "admin";
     }
 
