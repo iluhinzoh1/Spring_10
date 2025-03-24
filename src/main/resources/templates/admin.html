@@ -166,6 +166,12 @@
         .modal.show {
             display: block;
         }
+
+        .modal-body .form-floating {
+            text-align: center;
+            margin: 0 auto; /* Центрирование по горизонтали */
+            width: 50%;
+        }
     </style>
 </head>
 <body>
@@ -266,33 +272,33 @@
                                                     <input type="hidden" name="id" th:value="${user.id}">
 
                                                     <div class="form-floating mb-3">
+                                                        <h5>ID</h5>
                                                         <input type="text" class="form-control" id="id"
-                                                               th:value="${user.id}" readonly>
-                                                        <label for="id">ID</label>
+                                                               th:value="${user.id}" disabled readonly>
                                                     </div>
 
                                                     <div class="form-floating mb-3">
+                                                        <h5>Email</h5>
                                                         <input type="text" class="form-control" name="username" th:value="${user.username}" placeholder="Email">
-                                                        <label>Email</label>
                                                     </div>
 
                                                     <div class="form-floating mb-3">
-                                                        <label for="newPassword">New Password:</label>
+                                                        <h5>New Password:</h5>
                                                         <input type="password" id="newPassword" name="newPassword"
                                                                class="form-control">
                                                     </div>
 
                                                     <div class="form-floating mb-3">
+                                                        <h5>Roles</h5>
                                                         <select class="form-select" name="roles" multiple>
                                                             <option th:each="role : ${roles}" th:value="${role.id}" th:selected="${user.roles.contains(role)}"
                                                                     th:text="${role.name}"></option>
                                                         </select>
-                                                        <label>Roles</label>
                                                     </div>
 
                                                     <div class="modal-footer">
-                                                        <button type="submit" class="btn btn-primary btn-sm">Update User</button>
                                                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary btn-sm" style="width: 50px">Edit</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -303,8 +309,55 @@
 
                             <!-- Кнопка "Удалить" с динамической ссылкой -->
                             <td>
-                                <a th:href="@{/admin/deleteUser/{id}(id=${user.id})}" class="btn btn-danger btn-sm">Delete</a>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        th:data-userid="${user.id}"
+                                        th:data-bs-target="'#editModal2_' + ${user.id}">
+                                    Delete
+                                </button>
+
+                                <div th:id="'editModal2_' + ${user.id}" class="modal fade" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit User</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form th:action="@{/admin/deleteUser}" method="post" th:object="${updateUserId}">
+                                                    <input type="hidden" name="id" th:value="${user.id}">
+
+                                                    <div class="form-floating mb-3">
+                                                        <h5>ID</h5>
+                                                        <input type="text" class="form-control" id="id2"
+                                                               th:value="${user.id}" disabled readonly>
+                                                    </div>
+
+                                                    <div class="form-floating mb-3">
+                                                        <h5>Email</h5>
+                                                        <input type="text" class="form-control" name="username" th:value="${user.username}" disabled>
+                                                    </div>
+
+                                                    <div class="form-floating mb-3">
+                                                        <h5>Roles</h5>
+                                                        <select class="form-select" name="roles" multiple disabled>
+                                                            <option th:each="role : ${roles}" th:value="${role.id}" th:selected="${user.roles.contains(role)}"
+                                                                    th:text="${role.name}" disabled></option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
+
                         </tr>
                         </tbody>
                     </table>
