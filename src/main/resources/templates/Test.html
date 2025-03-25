@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+                integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+                integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+                crossorigin="anonymous"></script>
+        <meta charset="UTF-8">
+        <style>
+            body, html {
+                padding: 0;
+                margin: 0;
+            }
+
+            .top-bar {
+                background-color: black;
+                color: white;
+                padding: 10px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .top-bar .buttonLog input[type="button"] {
+                background-color: black;
+                color: #939393;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+
+            .top-bar .text {
+                font-size: 18px;
+                font-weight: bold;
+                display: flex;
+            }
+
+            .top-bar .text h4 {
+                margin: 0;
+                padding-right: 5px;
+                font-weight: normal;
+            }
+        </style>
+    </head>
+<body>
+<div class="top-bar">
+    <div class="text">
+        <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
+        <h4>with roles:
+            <span th:each="role : ${userShow.authorities}"
+                  th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+        </h4>
+    </div>
+    <div class="buttonLog">
+        <input type="button" value="Logout" onclick="window.location.href = '/login'">
+    </div>
+</div>
+
+<div class="d-flex align-items-start">
+    <!-- Навигационные элементы -->
+    <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home"
+                type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Admin
+        </button>
+        <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile"
+                type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">User
+        </button>
+    </div>
+
+    <!-- Контейнеры содержимого -->
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+            <div class="tab-content">
+                <div id="tab-panel1" class="tab-panel">
+                    <h1>Admin panel</h1>
+                    <div class="inner-tabs-container">
+                        <!-- Внутренние вкладки -->
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                                        data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
+                                        aria-selected="true">Users table
+                                </button>
+                                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+                                        data-bs-target="#nav-profile"
+                                        type="button" role="tab" aria-controls="nav-profile" aria-selected="false">New
+                                    User
+                                </button>
+                            </div>
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                 aria-labelledby="nav-home-tab">
+                                <!-- Контент внутренних вкладок -->
+                                <div class="inner-tab-content">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <h2 style="font-weight: normal">All users</h2>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Role</th>
+                                            <th scope="col">Edit</th>
+                                            <th scope="col">Delete</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <!-- Этот тег генерирует строки для каждого пользователя -->
+                                        <tr th:each="user : ${allUsers}">
+                                            <!-- ID пользователя -->
+                                            <td th:text="${user.id}"></td>
+
+                                            <!-- Email пользователя -->
+                                            <td th:text="${user.username}"></td>
+
+                                            <!-- Роль пользователя -->
+                                            <td>
+                                    <span th:each="role : ${user.authorities}"
+                                          th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+                                            </td>
+
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-primary btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        th:data-userid="${user.username}"
+                                                        th:data-bs-target="'#editModal_' + ${user.username}">
+                                                    Edit
+                                                </button>
+
+                                                <div th:id="'editModal_' + ${user.username}" class="modal fade"
+                                                     tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Edit User</h5>
+                                                                <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form th:action="@{/admin/updateUserById}" method="post"
+                                                                      th:object="${updateUserId}">
+                                                                    <input type="hidden" name="id"
+                                                                           th:value="${user.id}">
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>ID</h5>
+                                                                        <input type="text" class="form-control" id="id"
+                                                                               th:value="${user.id}" disabled readonly>
+                                                                    </div>
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>Email</h5>
+                                                                        <input type="text" class="form-control"
+                                                                               name="username"
+                                                                               th:value="${user.username}"
+                                                                               placeholder="Email">
+                                                                    </div>
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>New Password:</h5>
+                                                                        <input type="password" id="newPassword"
+                                                                               name="newPassword"
+                                                                               class="form-control">
+                                                                    </div>
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>Roles</h5>
+                                                                        <select class="form-select" name="roles"
+                                                                                multiple>
+                                                                            <option th:each="role : ${roles}"
+                                                                                    th:value="${role.id}"
+                                                                                    th:selected="${user.roles.contains(role)}"
+                                                                                    th:text="${role.name}"></option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button"
+                                                                                class="btn btn-secondary btn-sm"
+                                                                                data-bs-dismiss="modal">Close
+                                                                        </button>
+                                                                        <button type="submit"
+                                                                                class="btn btn-primary btn-sm"
+                                                                                style="width: 50px">Edit
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Кнопка "Удалить" с динамической ссылкой -->
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        th:data-userid="${user.id}"
+                                                        th:data-bs-target="'#editModal2_' + ${user.id}">
+                                                    Delete
+                                                </button>
+
+                                                <div th:id="'editModal2_' + ${user.id}" class="modal fade"
+                                                     tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Edit User</h5>
+                                                                <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form th:action="@{/admin/deleteUser}" method="post"
+                                                                      th:object="${updateUserId}">
+                                                                    <input type="hidden" name="id"
+                                                                           th:value="${user.id}">
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>ID</h5>
+                                                                        <input type="text" class="form-control" id="id2"
+                                                                               th:value="${user.id}" disabled readonly>
+                                                                    </div>
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>Email</h5>
+                                                                        <input type="text" class="form-control"
+                                                                               name="username"
+                                                                               th:value="${user.username}" disabled>
+                                                                    </div>
+
+                                                                    <div class="form-floating mb-3">
+                                                                        <h5>Roles</h5>
+                                                                        <select class="form-select" name="roles"
+                                                                                multiple
+                                                                                disabled>
+                                                                            <option th:each="role : ${roles}"
+                                                                                    th:value="${role.id}"
+                                                                                    th:selected="${user.roles.contains(role)}"
+                                                                                    th:text="${role.name}"
+                                                                                    disabled></option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button"
+                                                                                class="btn btn-secondary btn-sm"
+                                                                                data-bs-dismiss="modal">Close
+                                                                        </button>
+                                                                        <button type="submit"
+                                                                                class="btn btn-danger btn-sm">
+                                                                            Delete
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                 aria-labelledby="nav-profile-tab">
+                                привет
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                Profile Content
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

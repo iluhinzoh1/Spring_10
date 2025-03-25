@@ -89,7 +89,6 @@
 
         .tab-content {
             flex: 1;
-            padding: 25px;
             background-color: #e3e0e0;
         }
 
@@ -105,6 +104,7 @@
         /* Стили для внутренних вкладок */
         .inner-tabs-container {
             margin-top: 20px;
+            margin-left: 50px;
         }
 
         .inner-tabs {
@@ -141,8 +141,10 @@
         .inner-tab-content {
             border: 1px solid #ddd;
             border-top: none;
-            padding: 20px;
             background-color: #fff;
+            max-width: 1800px; /* или 90%, или другое значение по вкусу */
+            padding: 0 15px;  /* дополнительный отступ внутри контейнера */
+            margin-right: 50px;
         }
 
         .inner-tab-panel {
@@ -171,6 +173,11 @@
             text-align: center;
             margin: 0 auto; /* Центрирование по горизонтали */
             width: 50%;
+        }
+
+        .inner-tab-content .bg-light {
+            margin-left: -15px;
+            margin-right: -15px;
         }
     </style>
 </head>
@@ -207,163 +214,232 @@
     <!-- Контент вкладок -->
     <div class="tab-content">
         <div id="tab-panel1" class="tab-panel">
-            <h1>Admin panel</h1>
+            <h1 style="margin-left: 50px; margin-top: 10px">Admin panel</h1>
             <div class="inner-tabs-container">
-                <!-- Радиокнопки для внутренних вкладок -->
-                <input type="radio" id="inner-tab1" name="inner-tabs" checked>
-                <input type="radio" id="inner-tab2" name="inner-tabs">
-
                 <!-- Внутренние вкладки -->
-                <ul class="inner-tabs">
-                    <li>
-                        <label for="inner-tab1">Users table</label>
-                    </li>
-                    <li>
-                        <label for="inner-tab2">New User</label>
-                    </li>
-                </ul>
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
+                                aria-selected="true">Users table
+                        </button>
+                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                                type="button" role="tab" aria-controls="nav-profile" aria-selected="false">New User
+                        </button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <!-- Контент внутренних вкладок -->
+                        <div class="inner-tab-content">
+                            <table class="table table-hover">
+                                <thead>
+                                <div class="bg-light p-1 border">
+                                    <h2 class="mb-0" style="padding-left: 10px; font-weight: normal;">All users</h2>
+                                </div>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Edit</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- Этот тег генерирует строки для каждого пользователя -->
+                                <tr th:each="user : ${allUsers}">
+                                    <!-- ID пользователя -->
+                                    <td th:text="${user.id}"></td>
 
-                <!-- Контент внутренних вкладок -->
-                <div class="inner-tab-content">
-                    <table class="table table-hover">
-                        <thead>
-                        <h2 style="font-weight: normal">All users</h2>
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Edit</th>
-                            <th scope="col">Delete</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Этот тег генерирует строки для каждого пользователя -->
-                        <tr th:each="user : ${allUsers}">
-                            <!-- ID пользователя -->
-                            <td th:text="${user.id}"></td>
+                                    <!-- Email пользователя -->
+                                    <td th:text="${user.username}"></td>
 
-                            <!-- Email пользователя -->
-                            <td th:text="${user.username}"></td>
-
-                            <!-- Роль пользователя -->
-                            <td>
+                                    <!-- Роль пользователя -->
+                                    <td>
                                     <span th:each="role : ${user.authorities}"
                                           th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
-                            </td>
+                                    </td>
 
-                            <td>
-                                <button type="button"
-                                        class="btn btn-primary btn-sm"
-                                        data-bs-toggle="modal"
-                                        th:data-userid="${user.username}"
-                                        th:data-bs-target="'#editModal_' + ${user.username}">
-                                    Edit
-                                </button>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-primary btn-sm"
+                                                data-bs-toggle="modal"
+                                                th:data-userid="${user.username}"
+                                                th:data-bs-target="'#editModal_' + ${user.username}">
+                                            Edit
+                                        </button>
 
-                                <div th:id="'editModal_' + ${user.username}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Edit User</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form th:action="@{/admin/updateUserById}" method="post" th:object="${updateUserId}">
-                                                    <input type="hidden" name="id" th:value="${user.id}">
-
-                                                    <div class="form-floating mb-3">
-                                                        <h5>ID</h5>
-                                                        <input type="text" class="form-control" id="id"
-                                                               th:value="${user.id}" disabled readonly>
+                                        <div th:id="'editModal_' + ${user.username}" class="modal fade" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Edit User</h5>
+                                                        <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal"></button>
                                                     </div>
+                                                    <div class="modal-body">
+                                                        <form th:action="@{/admin/updateUserById}" method="post"
+                                                              th:object="${updateUserId}">
+                                                            <input type="hidden" name="id" th:value="${user.id}">
 
-                                                    <div class="form-floating mb-3">
-                                                        <h5>Email</h5>
-                                                        <input type="text" class="form-control" name="username" th:value="${user.username}" placeholder="Email">
+                                                            <div class="form-floating mb-3">
+                                                                <h5>ID</h5>
+                                                                <input type="text" class="form-control" id="id"
+                                                                       th:value="${user.id}" disabled readonly>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Email</h5>
+                                                                <input type="text" class="form-control" name="username"
+                                                                       th:value="${user.username}" placeholder="Email">
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>New Password:</h5>
+                                                                <input type="password" id="newPassword"
+                                                                       name="newPassword"
+                                                                       class="form-control">
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Roles</h5>
+                                                                <select class="form-select" name="roles" multiple>
+                                                                    <option th:each="role : ${roles}"
+                                                                            th:value="${role.id}"
+                                                                            th:selected="${user.roles.contains(role)}"
+                                                                            th:text="${role.name}"></option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                                        data-bs-dismiss="modal">Close
+                                                                </button>
+                                                                <button type="submit" class="btn btn-primary btn-sm"
+                                                                        style="width: 50px">Edit
+                                                                </button>
+                                                            </div>
+                                                        </form>
                                                     </div>
-
-                                                    <div class="form-floating mb-3">
-                                                        <h5>New Password:</h5>
-                                                        <input type="password" id="newPassword" name="newPassword"
-                                                               class="form-control">
-                                                    </div>
-
-                                                    <div class="form-floating mb-3">
-                                                        <h5>Roles</h5>
-                                                        <select class="form-select" name="roles" multiple>
-                                                            <option th:each="role : ${roles}" th:value="${role.id}" th:selected="${user.roles.contains(role)}"
-                                                                    th:text="${role.name}"></option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary btn-sm" style="width: 50px">Edit</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <!-- Кнопка "Удалить" с динамической ссылкой -->
-                            <td>
-                                <button type="button"
-                                        class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        th:data-userid="${user.id}"
-                                        th:data-bs-target="'#editModal2_' + ${user.id}">
-                                    Delete
-                                </button>
-
-                                <div th:id="'editModal2_' + ${user.id}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Edit User</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form th:action="@{/admin/deleteUser}" method="post" th:object="${updateUserId}">
-                                                    <input type="hidden" name="id" th:value="${user.id}">
-
-                                                    <div class="form-floating mb-3">
-                                                        <h5>ID</h5>
-                                                        <input type="text" class="form-control" id="id2"
-                                                               th:value="${user.id}" disabled readonly>
-                                                    </div>
-
-                                                    <div class="form-floating mb-3">
-                                                        <h5>Email</h5>
-                                                        <input type="text" class="form-control" name="username" th:value="${user.username}" disabled>
-                                                    </div>
-
-                                                    <div class="form-floating mb-3">
-                                                        <h5>Roles</h5>
-                                                        <select class="form-select" name="roles" multiple disabled>
-                                                            <option th:each="role : ${roles}" th:value="${role.id}" th:selected="${user.roles.contains(role)}"
-                                                                    th:text="${role.name}" disabled></option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                                    </div>
-                                                </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </td>
+                                    </td>
 
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div id="inner-tab-panel2" class="inner-tab-panel">
-                        <h2>New User</h2>
-                        <p></p>
+                                    <!-- Кнопка "Удалить" с динамической ссылкой -->
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                th:data-userid="${user.id}"
+                                                th:data-bs-target="'#editModal2_' + ${user.id}">
+                                            Delete
+                                        </button>
+
+                                        <div th:id="'editModal2_' + ${user.id}" class="modal fade" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Edit User</h5>
+                                                        <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form th:action="@{/admin/deleteUser}" method="post"
+                                                              th:object="${updateUserId}">
+                                                            <input type="hidden" name="id" th:value="${user.id}">
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>ID</h5>
+                                                                <input type="text" class="form-control" id="id2"
+                                                                       th:value="${user.id}" disabled readonly>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Email</h5>
+                                                                <input type="text" class="form-control" name="username"
+                                                                       th:value="${user.username}" disabled>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Roles</h5>
+                                                                <select class="form-select" name="roles" multiple
+                                                                        disabled>
+                                                                    <option th:each="role : ${roles}"
+                                                                            th:value="${role.id}"
+                                                                            th:selected="${user.roles.contains(role)}"
+                                                                            th:text="${role.name}" disabled></option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                                        data-bs-dismiss="modal">Close
+                                                                </button>
+                                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                                    Delete
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="bg-light p-1 border" style="margin-right: 50px;">
+                            <h2 class="mb-0" style="padding-left: 10px; font-weight: normal;">Add new user</h2>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row justify-content-center" style="margin-right: 38px;">
+                                <div class="col-md-12 p-4 bg-white border">
+                                    <form th:action="@{/admin/saveUsers}" method="post" th:object="${save}"
+                                          class="w-100 mx-auto" style="max-width: 400px; text-align: center">
+                                        <!-- Email -->
+                                        <div class="mb-3">
+                                            <h5 for="email" class="form-label">Email</h5>
+                                            <input type="email"
+                                                   class="form-control"
+                                                   id="email"
+                                                   th:field="*{username}"
+                                                   placeholder="example@mail.com">
+                                        </div>
+
+                                        <!-- Password -->
+                                        <div class="mb-3">
+                                            <h5 for="password" class="form-label">Password</h5>
+                                            <input type="password"
+                                                   class="form-control"
+                                                   id="password"
+                                                   th:field="*{password}"
+                                                   placeholder="Введите пароль">
+                                        </div>
+
+                                        <!-- Role -->
+                                        <div class="form-floating mb-3">
+                                            <h5>Roles</h5>
+                                            <select class="form-select" name="roles" multiple>
+                                                <option th:each="role : ${roles}"
+                                                        th:value="${role.id}"
+                                                        th:text="${role.name}"></option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Кнопка по центру -->
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-success btn-lg">Add new user</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

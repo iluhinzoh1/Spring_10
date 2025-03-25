@@ -49,15 +49,16 @@ public class AdminController {
         model.addAttribute("updateUserId", updateUser);
         model.addAttribute("roles", roleServiceImp.getAllRoles());
         model.addAttribute("userShow", user2);
+        model.addAttribute("save", new User());
         return "admin";
     }
 
-    @GetMapping("addNewUser")
-    public String saveUser(Model model) {
-        model.addAttribute("save", new User());
-        model.addAttribute("roles", roleServiceImp.getAllRoles());
-        return "user-info";
-    }
+//    @GetMapping("addNewUser")
+//    public String saveUser(Model model) {
+//        model.addAttribute("save", new User());
+//        model.addAttribute("roles", roleServiceImp.getAllRoles());
+//        return "user-info";
+//    }
 
     @PostMapping("/saveUsers")
     public String saveUser(@ModelAttribute("save") User user) {
