@@ -30,7 +30,7 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String Users(Model model, Principal principal,@RequestParam(value = "username", required = false) String username) {
+    public String Users(Model model, Principal principal, @RequestParam(value = "username", required = false) String username) {
         List<User> user = userServiceImp.findAllUsers();
         model.addAttribute("allUsers", user);
         User user2 = userServiceImp.findByUserName(principal.getName());
@@ -52,13 +52,6 @@ public class AdminController {
         model.addAttribute("save", new User());
         return "admin";
     }
-
-//    @GetMapping("addNewUser")
-//    public String saveUser(Model model) {
-//        model.addAttribute("save", new User());
-//        model.addAttribute("roles", roleServiceImp.getAllRoles());
-//        return "user-info";
-//    }
 
     @PostMapping("/saveUsers")
     public String saveUser(@ModelAttribute("save") User user) {

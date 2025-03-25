@@ -107,14 +107,6 @@
             margin-left: 50px;
         }
 
-        .inner-tabs {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            border-bottom: 1px solid #ddd;
-        }
-
         .inner-tabs li {
             margin-right: 10px;
         }
@@ -142,13 +134,9 @@
             border: 1px solid #ddd;
             border-top: none;
             background-color: #fff;
-            max-width: 1800px; /* или 90%, или другое значение по вкусу */
-            padding: 0 15px;  /* дополнительный отступ внутри контейнера */
+            max-width: 1800px;
+            padding: 0 15px;
             margin-right: 50px;
-        }
-
-        .inner-tab-panel {
-            display: none;
         }
 
         #inner-tab1:checked ~ .inner-tab-content #inner-tab-panel1,
@@ -156,22 +144,9 @@
             display: block;
         }
 
-        /* Когда чекбокс активен, показываем окно */
-        #modal-toggle:checked + .modal {
-            display: block;
-        }
-
-        .modal {
-            display: none;
-        }
-
-        .modal.show {
-            display: block;
-        }
-
         .modal-body .form-floating {
             text-align: center;
-            margin: 0 auto; /* Центрирование по горизонтали */
+            margin: 0 auto;
             width: 50%;
         }
 
@@ -182,7 +157,7 @@
     </style>
 </head>
 <body>
-<!-- Черная полоса сверху -->
+
 <div class="top-bar">
     <div class="text">
         <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
@@ -195,9 +170,9 @@
         <input type="button" value="Logout" onclick="window.location.href = '/login'">
     </div>
 </div>
-<!-- Nav tabs -->
+
 <div class="tabs-container">
-    <!-- Радиокнопки и лейблы -->
+
     <input type="radio" id="tab1" name="tabs" checked>
     <input type="radio" id="tab2" name="tabs">
 
@@ -211,7 +186,7 @@
         </li>
     </ul>
 
-    <!-- Контент вкладок -->
+
     <div class="tab-content">
         <div id="tab-panel1" class="tab-panel">
             <h1 style="margin-left: 50px; margin-top: 10px">Admin panel</h1>
@@ -246,7 +221,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- Этот тег генерирует строки для каждого пользователя -->
+                                <!-- генерирует строки для каждого пользователя -->
                                 <tr th:each="user : ${allUsers}">
                                     <!-- ID пользователя -->
                                     <td th:text="${user.id}"></td>
@@ -326,7 +301,7 @@
                                         </div>
                                     </td>
 
-                                    <!-- Кнопка "Удалить" с динамической ссылкой -->
+
                                     <td>
                                         <button type="button"
                                                 class="btn btn-danger btn-sm"
@@ -386,7 +361,6 @@
                                             </div>
                                         </div>
                                     </td>
-
                                 </tr>
                                 </tbody>
                             </table>
@@ -409,7 +383,7 @@
                                                    class="form-control"
                                                    id="email"
                                                    th:field="*{username}"
-                                                   placeholder="example@mail.com">
+                                                   placeholder="example@mail.com" required>
                                         </div>
 
                                         <!-- Password -->
@@ -419,7 +393,7 @@
                                                    class="form-control"
                                                    id="password"
                                                    th:field="*{password}"
-                                                   placeholder="Введите пароль">
+                                                   placeholder="Введите пароль" required>
                                         </div>
 
                                         <!-- Role -->
@@ -428,7 +402,7 @@
                                             <select class="form-select" name="roles" multiple>
                                                 <option th:each="role : ${roles}"
                                                         th:value="${role.id}"
-                                                        th:text="${role.name}"></option>
+                                                        th:text="${role.name}" required></option>
                                             </select>
                                         </div>
 

@@ -106,14 +106,6 @@
             margin-left: 50px;
         }
 
-        .inner-tabs {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            border-bottom: 1px solid #ddd;
-        }
-
         .inner-tabs li {
             margin-right: 10px;
         }
@@ -142,13 +134,10 @@
             border-top: none;
             background-color: #fff;
             max-width: 1800px; /* или 90%, или другое значение по вкусу */
-            padding: 0 15px;  /* дополнительный отступ внутри контейнера */
+            padding: 0 15px; /* дополнительный отступ внутри контейнера */
             margin-right: 50px;
         }
 
-        .inner-tab-panel {
-            display: none;
-        }
 
         #inner-tab1:checked ~ .inner-tab-content #inner-tab-panel1,
         #inner-tab2:checked ~ .inner-tab-content #inner-tab-panel2 {
@@ -157,14 +146,6 @@
 
         /* Когда чекбокс активен, показываем окно */
         #modal-toggle:checked + .modal {
-            display: block;
-        }
-
-        .modal {
-            display: none;
-        }
-
-        .modal.show {
             display: block;
         }
 
@@ -181,7 +162,7 @@
     </style>
 </head>
 <body>
-<!-- Черная полоса сверху -->
+
 <div class="top-bar">
     <div class="text">
         <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
@@ -194,9 +175,9 @@
         <input type="button" value="Logout" onclick="window.location.href = '/login'">
     </div>
 </div>
-<!-- Nav tabs -->
+
 <div class="tabs-container">
-    <!-- Радиокнопки и лейблы -->
+
     <input type="radio" id="tab2" name="tabs" checked>
 
     <!-- Вкладки -->
@@ -206,7 +187,7 @@
         </li>
     </ul>
 
-    <!-- Контент вкладок -->
+
     <div class="tab-content">
         <div id="tab-panel2" class="tab-panel">
             <h1 style="margin-left: 50px; margin-top: 10px">User information-page</h1>
