@@ -1,20 +1,243 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spring Security Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <style>
+        body, html {
+            padding: 0;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .buttonLog input[type="button"] {
+            background-color: black;
+            color: #939393;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .top-bar .text {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+        }
+
+        .top-bar .text h4 {
+            margin: 0;
+            padding-right: 5px;
+            font-weight: normal;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .tabs-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 300px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            margin-top: 25px;
+        }
+
+        .tabs li {
+            display: block;
+        }
+
+        .tabs label {
+            display: block;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+            background-color: #e9ecef;
+            color: #000;
+        }
+
+        .tabs label:hover {
+            background-color: #ddd;
+        }
+
+        #tab2:checked ~ .tabs li:first-child label {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .tab-content {
+            flex: 1;
+            background-color: #e3e0e0;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        #tab1:checked ~ .tab-content #tab-panel1,
+        #tab2:checked ~ .tab-content #tab-panel2 {
+            display: block;
+        }
+
+        /* Стили для внутренних вкладок */
+        .inner-tabs-container {
+            margin-top: 20px;
+            margin-left: 50px;
+        }
+
+        .inner-tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .inner-tabs li {
+            margin-right: 10px;
+        }
+
+        .inner-tabs input[type="radio"]:checked + label {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+        }
+
+        .inner-tabs label {
+            display: block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .inner-tabs label:hover {
+            background-color: #ddd;
+        }
+
+        .inner-tab-content {
+            border: 1px solid #ddd;
+            border-top: none;
+            background-color: #fff;
+            max-width: 1800px; /* или 90%, или другое значение по вкусу */
+            padding: 0 15px;  /* дополнительный отступ внутри контейнера */
+            margin-right: 50px;
+        }
+
+        .inner-tab-panel {
+            display: none;
+        }
+
+        #inner-tab1:checked ~ .inner-tab-content #inner-tab-panel1,
+        #inner-tab2:checked ~ .inner-tab-content #inner-tab-panel2 {
+            display: block;
+        }
+
+        /* Когда чекбокс активен, показываем окно */
+        #modal-toggle:checked + .modal {
+            display: block;
+        }
+
+        .modal {
+            display: none;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-body .form-floating {
+            text-align: center;
+            margin: 0 auto; /* Центрирование по горизонтали */
+            width: 50%;
+        }
+
+        .inner-tab-content .bg-light {
+            margin-left: -15px;
+            margin-right: -15px;
+        }
+    </style>
 </head>
 <body>
-<center>
-    <h1>Hello User!</h1>
+<!-- Черная полоса сверху -->
+<div class="top-bar">
+    <div class="text">
+        <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
+        <h4>with roles:
+            <span th:each="role : ${userShow.authorities}"
+                  th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+        </h4>
+    </div>
+    <div class="buttonLog">
+        <input type="button" value="Logout" onclick="window.location.href = '/login'">
+    </div>
+</div>
+<!-- Nav tabs -->
+<div class="tabs-container">
+    <!-- Радиокнопки и лейблы -->
+    <input type="radio" id="tab2" name="tabs" checked>
 
-    <th:block th:each="uS : ${userShow}">
-        <h3 th:text="${uS}"></h3>
-    </th:block>
-    <input type="button" value="LOGOUT" onclick="window.location.href = '/login'">
-</center>
+    <!-- Вкладки -->
+    <ul class="tabs">
+        <li>
+            <label for="tab2" style="font-weight: bold">User</label>
+        </li>
+    </ul>
 
+    <!-- Контент вкладок -->
+    <div class="tab-content">
+        <div id="tab-panel2" class="tab-panel">
+            <h1 style="margin-left: 50px; margin-top: 10px">User information-page</h1>
+            <div class="inner-tabs-container">
+                <div class="inner-tab-content">
+                    <table class="table table-hover">
+                        <thead>
+                        <div class="bg-light p-1 border">
+                            <h2 class="mb-0" style="padding-left: 10px; font-weight: normal;">About user</h2>
+                        </div>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${userShow.id}"></td>
+                            <td th:text="${userShow.username}"></td>
+                            <td>
+                        <span th:each="role : ${userShow.authorities}"
+                              th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

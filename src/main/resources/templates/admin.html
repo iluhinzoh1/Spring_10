@@ -445,30 +445,35 @@
             </div>
         </div>
         <div id="tab-panel2" class="tab-panel">
-            <h1>User information-page</h1>
+            <h1 style="margin-left: 50px; margin-top: 10px">User information-page</h1>
+            <div class="inner-tabs-container">
+                <div class="inner-tab-content">
+                    <table class="table table-hover">
+                        <thead>
+                        <div class="bg-light p-1 border">
+                            <h2 class="mb-0" style="padding-left: 10px; font-weight: normal;">About user</h2>
+                        </div>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${userShow.id}"></td>
+                            <td th:text="${userShow.username}"></td>
+                            <td>
+                        <span th:each="role : ${userShow.authorities}"
+                              th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<!--<center>-->
-<!--    <table border="1">-->
-<!--        <caption> Таблица всех пользователей</caption>-->
-<!--        <th:block th:each="msg : ${allUsers}">-->
-<!--            <tr>-->
-<!--                <td>-->
-<!--                    <h3 th:text="${msg}"></h3>-->
-<!--                    <center><a th:href="@{/admin/updateUser(username=${msg.username})}" th:text="UPDATE"> user </a>-->
-<!--                        <a th:href="@{/admin/deleteUser(id=${msg.getId()})}" th:text="DELETE"> user </a>-->
-<!--                    </center>-->
-<!--                </td>-->
-<!--            <tr>-->
-<!--        </th:block>-->
-<!--    </table>-->
-<!--    <br>-->
-<!--    <br>-->
-
-<!--    <input type="button" value="ADD" onclick="window.location.href = '/admin/addNewUser'"/>-->
-
-<!--</center>-->
 </body>
 </html>
