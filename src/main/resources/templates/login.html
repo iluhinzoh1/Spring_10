@@ -15,26 +15,26 @@
 
 
 <div class="mt-5" style="text-align: center">
-        <div class="mb-1" style="width: 17%; margin: 0 auto;">
-            <h3 style="text-align: left; font-weight: bold">Please sign in</h3>
-        </div>
-        <form th:action="@{/login}" method="post">
-            <div class="mb-0 bd-highlight">
+    <div class="mb-1" style="width: 17%; margin: 0 auto;">
+        <h3 style="text-align: left; font-weight: bold">Please sign in</h3>
+    </div>
+    <form th:action="@{/login}" method="post">
+        <div class="mb-0 bd-highlight">
+            <div class="mb-1" style="width: 17%; margin: 0 auto;">
+                <input type="email" id="email" name="email" class="form-control form-control-lg"
+                       autofocus="autofocus"
+                       placeholder="Email address"/>
+                <input type="password" id="password" name="password" class="form-control form-control-lg"
+                       autofocus="autofocus"
+                       placeholder="Password"/>
+            </div>
+            <div class="p-2">
                 <div class="mb-1" style="width: 17%; margin: 0 auto;">
-                    <input type="email" id="email" name="email" class="form-control form-control-lg"
-                           autofocus="autofocus"
-                           placeholder="Email address"/>
-                    <input type="password" id="password" name="password" class="form-control form-control-lg"
-                           autofocus="autofocus"
-                           placeholder="Password"/>
-                </div>
-                <div class="p-2">
-                    <div class="mb-1" style="width: 17%; margin: 0 auto;">
-                        <button type="submit" class="btn btn-primary btn-lg w-100 form-control-lg">Sign in</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 form-control-lg">Sign in</button>
                 </div>
             </div>
-        </form>
+        </div>
+    </form>
 </div>
 </body>
 </html>
