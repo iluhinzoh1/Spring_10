@@ -32,6 +32,9 @@ public class testUsers implements CommandLineRunner {
         if (userService.findAllUsers().isEmpty()) {
             User admin = new User();
             admin.setUsername("admin@mail.ru");
+            admin.setFirstName("admin");
+            admin.setLastName("admin");
+            admin.setAge((byte) 19);
             admin.setPassword("admin");
             admin.setRoles(Set.of(roleService.findByName("ROLE_ADMIN"), roleService.findByName("ROLE_USER")));
             userService.saveUser(admin);
@@ -39,6 +42,9 @@ public class testUsers implements CommandLineRunner {
             User user = new User();
             user.setUsername("user@mail.ru");
             user.setPassword("user");
+            user.setFirstName("user");
+            user.setLastName("user");
+            user.setAge((byte) 19);
             user.setRoles(Set.of(roleService.findByName("ROLE_USER")));
             userService.saveUser(user);
         }

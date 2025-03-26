@@ -214,6 +214,9 @@
                                 </div>
                                 <tr>
                                     <th scope="col">ID</th>
+                                    <th scope="col">First name</th>
+                                    <th scope="col">Last name</th>
+                                    <th scope="col">Age</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Role</th>
                                     <th scope="col">Edit</th>
@@ -226,6 +229,9 @@
                                     <!-- ID пользователя -->
                                     <td th:text="${user.id}"></td>
 
+                                    <td th:text="${user.firstName}"></td>
+                                    <td th:text="${user.lastName}"></td>
+                                    <td th:text="${user.age}"></td>
                                     <!-- Email пользователя -->
                                     <td th:text="${user.username}"></td>
 
@@ -264,9 +270,33 @@
                                                             </div>
 
                                                             <div class="form-floating mb-3">
+                                                                <h5>First Name</h5>
+                                                                <input type="text" class="form-control" name="firstName"
+                                                                       th:value="${user.firstName}"
+                                                                       placeholder="firstName"
+                                                                       required>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Last Name</h5>
+                                                                <input type="text" class="form-control" name="lastName"
+                                                                       th:value="${user.lastName}"
+                                                                       placeholder="lastName"
+                                                                       required>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Age</h5>
+                                                                <input type="number" class="form-control" name="age"
+                                                                       th:value="${user.age}" placeholder="age"
+                                                                       th:max="100">
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
                                                                 <h5>Email</h5>
                                                                 <input type="text" class="form-control" name="username"
-                                                                       th:value="${user.username}" placeholder="Email">
+                                                                       th:value="${user.username}" placeholder="Email"
+                                                                       required>
                                                             </div>
 
                                                             <div class="form-floating mb-3">
@@ -331,6 +361,29 @@
                                                             </div>
 
                                                             <div class="form-floating mb-3">
+                                                                <h5>First Name</h5>
+                                                                <input type="text" class="form-control" name="firstName"
+                                                                       th:value="${user.firstName}"
+                                                                       placeholder="firstName"
+                                                                       disabled>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Last Name</h5>
+                                                                <input type="text" class="form-control" name="lastName"
+                                                                       th:value="${user.lastName}"
+                                                                       placeholder="lastName"
+                                                                       disabled>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <h5>Age</h5>
+                                                                <input type="number" class="form-control" name="age"
+                                                                       th:value="${user.age}" placeholder="age"
+                                                                       th:max="100" disabled>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
                                                                 <h5>Email</h5>
                                                                 <input type="text" class="form-control" name="username"
                                                                        th:value="${user.username}" disabled>
@@ -376,7 +429,34 @@
                                 <div class="col-md-12 p-4 bg-white border">
                                     <form th:action="@{/admin/saveUsers}" method="post" th:object="${save}"
                                           class="w-100 mx-auto" style="max-width: 400px; text-align: center">
-                                        <!-- Email -->
+
+                                        <div class="mb-3">
+                                            <h5 for="firstName" class="form-label">First Name</h5>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="firstName"
+                                                   th:field="*{firstName}"
+                                                   placeholder="your name" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h5 for="lastName" class="form-label">Last Name</h5>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="lastName"
+                                                   th:field="*{lastName}"
+                                                   placeholder="your surname" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h5 for="age" class="form-label">Age</h5>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="age"
+                                                   th:field="*{age}"
+                                                   placeholder="your age" required>
+                                        </div>
+
                                         <div class="mb-3">
                                             <h5 for="email" class="form-label">Email</h5>
                                             <input type="email"
@@ -419,7 +499,7 @@
             </div>
         </div>
         <div id="tab-panel2" class="tab-panel">
-            <h1 style="margin-left: 50px; margin-top: 10px">User information-page</h1>
+            <h1 style="margin-left: 50px; margin-top: 20px;">User information-page</h1>
             <div class="inner-tabs-container">
                 <div class="inner-tab-content">
                     <table class="table table-hover">
@@ -429,6 +509,9 @@
                         </div>
                         <tr>
                             <th scope="col">ID</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Age</th>
                             <th scope="col">Email</th>
                             <th scope="col">Role</th>
                         </tr>
@@ -436,6 +519,9 @@
                         <tbody>
                         <tr>
                             <td th:text="${userShow.id}"></td>
+                            <td th:text="${userShow.firstName}"></td>
+                            <td th:text="${userShow.lastName}"></td>
+                            <td th:text="${userShow.age}"></td>
                             <td th:text="${userShow.username}"></td>
                             <td>
                         <span th:each="role : ${userShow.authorities}"

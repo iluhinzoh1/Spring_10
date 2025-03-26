@@ -67,6 +67,11 @@ public class AdminController {
 
         User existingUser = userServiceImp.findById(user.getId());
         existingUser.setUsername(user.getUsername());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setAge(user.getAge());
+        existingUser.setRoles(user.getRoles());
+
         if (newPassword != null && !newPassword.isEmpty()) {
             existingUser.setPassword(newPassword);
         }
