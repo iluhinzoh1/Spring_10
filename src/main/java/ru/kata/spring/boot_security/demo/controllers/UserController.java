@@ -13,7 +13,7 @@ import java.security.Principal;
 
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private UserServiceImp userServiceImp;
 

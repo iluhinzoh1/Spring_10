@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.models;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
 
 @Entity
 @Table(name = "users")
@@ -30,7 +32,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(nullable = false)
-    private byte age;
+    private int age;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -86,6 +88,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    @JsonProperty("roles")
     public Set<Role> getRoles() {
         return roles;
     }
@@ -118,11 +121,11 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public byte getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(byte age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
