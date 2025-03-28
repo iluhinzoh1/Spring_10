@@ -3,6 +3,9 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleServiceImp;
@@ -47,7 +50,26 @@ public class AdminController {
 
     @PutMapping("/users")
     public ResponseEntity<User> updateUser(@RequestParam(value = "newPassword", required = false) String newPassword,
-                                           @RequestBody User user) {
+                                           @RequestBody User user, Principal principal) {
+        User existingUser = userServiceImp.findById(user.getId());
+        existingUser.setUsername(user.getUsername());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setAge(user.getAge());
+        existingUser.setRoles(user.getRoles());
+
+        if (newPassword != null && !newPassword.isEmpty()) {
+            existingUser.setPassword(newPassword);
+        }
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(existingUser.getRoles());
+        }
+        userServiceImp.updateUser(user, newPassword);
+        if (principal.getName().equals(existingUser.getUsername())) {
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    existingUser, existingUser.getPassword(), existingUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
         return ResponseEntity.ok(userServiceImp.updateUser(user, newPassword));
     }
 
