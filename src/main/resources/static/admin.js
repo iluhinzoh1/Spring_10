@@ -30,12 +30,39 @@ function createCell(content) {
 }
 
 let currentUserId = null;
+let currentUserEditId = null;
 const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+const editModal = new bootstrap.Modal(document.getElementById('editModal'));
 
 async function handleAction(action, userId, userData) {
     if (action === 'Edit') {
+        currentUserEditId = userId;
+        document.getElementById('editUserId').value = userId;
+        document.getElementById('editFirstName').value = userData.firstName;
+        document.getElementById('editLastName').value = userData.lastName;
+        document.getElementById('editAge').value = userData.age;
+        document.getElementById('editUsername').value = userData.username;
+
+        const rolesSelectEdit = document.getElementById('editRoles');
+        rolesSelectEdit.innerHTML = ''; // Очищаем предыдущие значения
+
+        const response = await fetch('/api/admin/roles'); // Правильный endpoint для ролей
+        const roles = await response.json();
+
+        roles.forEach(role => {
+            const option = document.createElement('option');
+            option.value = role.name;
+            option.textContent = role.name.replace('ROLE_', '');
+            option.dataset.roleId = role.id;
+            // Помечаем выбранные роли пользователя
+            if (userData.roles.some(userRole => userRole.name === role.name)) {
+                option.selected = true;
+            }
+            rolesSelectEdit.appendChild(option);
+        });
         console.log('Edit user:', userId);
-        // Логика для редактирования
+        editModal.show();
+
     } else if (action === 'Delete') {
         currentUserId = userId;
 
@@ -82,6 +109,36 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
     } catch (error) {
         console.error('Ошибка:', error);
         alert('Не удалось удалить пользователя');
+    }
+});
+
+document.getElementById('confirmEdit').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+        const newPassword = document.getElementById('newPassword').value.trim();
+        const updatedUser = {
+            id: currentUserEditId,
+            firstName: document.getElementById('editFirstName').value,
+            lastName: document.getElementById('editLastName').value,
+            age: document.getElementById('editAge').value,
+            username: document.getElementById('editUsername').value,
+            password: newPassword || undefined,
+            roles: Array.from(document.getElementById('editRoles').selectedOptions)
+                .map(option => ({ id: parseInt(option.dataset.roleId) })) // Отправляем id ролей
+        };
+
+        const response = await fetch(`/api/admin/users/${currentUserEditId}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedUser)
+        });
+
+        if (!response.ok) throw new Error('Ошибка изменения');
+        editModal.hide();
+        await loadAllUsers();
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Не удалось изменить пользователя: ' + error.message);
     }
 });
 

@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleServiceImp;
 import ru.kata.spring.boot_security.demo.services.UserServiceImp;
@@ -48,29 +49,45 @@ public class AdminController {
         return ResponseEntity.ok(userServiceImp.saveUser(user));
     }
 
-    @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestParam(value = "newPassword", required = false) String newPassword,
-                                           @RequestBody User user, Principal principal) {
-        User existingUser = userServiceImp.findById(user.getId());
-        existingUser.setUsername(user.getUsername());
-        existingUser.setFirstName(user.getFirstName());
-        existingUser.setLastName(user.getLastName());
-        existingUser.setAge(user.getAge());
-        existingUser.setRoles(user.getRoles());
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable Long id,
+            @RequestBody User updatedUser, // Пароль теперь берется из тела запроса
+            Principal principal
+    ) {
+        // Получаем существующего пользователя из БД
+        User existingUser = userServiceImp.findById(id);
 
-        if (newPassword != null && !newPassword.isEmpty()) {
-            existingUser.setPassword(newPassword);
+        // Обновляем основные поля
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setAge(updatedUser.getAge());
+        existingUser.setRoles(updatedUser.getRoles());
+
+        // Обновляем пароль только если он указан
+        if (updatedUser.getPassword() != null
+                && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(updatedUser.getPassword());
         }
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(existingUser.getRoles());
+        if (updatedUser.getRoles() == null || updatedUser.getRoles().isEmpty()) {
+            updatedUser.setRoles(existingUser.getRoles());
         }
-        userServiceImp.updateUser(user, newPassword);
-        if (principal.getName().equals(existingUser.getUsername())) {
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    existingUser, existingUser.getPassword(), existingUser.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User savedUser = userServiceImp.updateUser(existingUser, updatedUser.getPassword());
+
+        // Обновляем контекст безопасности
+        if (principal.getName().equals(savedUser.getUsername())) {
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    savedUser, savedUser.getPassword(), savedUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
-        return ResponseEntity.ok(userServiceImp.updateUser(user, newPassword));
+
+        return ResponseEntity.ok(savedUser);
+    }
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok(roleServiceImp.getAllRoles());
     }
 
     @DeleteMapping("/users/{id}")

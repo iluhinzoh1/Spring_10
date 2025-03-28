@@ -318,13 +318,78 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Удалить</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="editModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-floating mb-3">
+                        <h5>ID</h5>
+                        <input type="text" class="form-control" id="editUserId" disabled readonly>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <h5>First Name</h5>
+                        <input type="text" class="form-control" name="firstName"
+                               placeholder="firstName"
+                               id="editFirstName" required>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <h5>Last Name</h5>
+                        <input type="text" class="form-control" name="lastName"
+                               placeholder="lastName"
+                               id="editLastName" required>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <h5>Age</h5>
+                        <input type="number" class="form-control" name="age"
+                               placeholder="age" id="editAge" required>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <h5>Email</h5>
+                        <input type="text" class="form-control" name="username" id="editUsername" required>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <h5>New Password:</h5>
+                        <input type="password" id="newPassword"
+                               name="newPassword"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <h5>Roles</h5>
+                        <select class="form-select" name="roles" multiple id="editRoles">
+                        </select>
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            data-bs-dismiss="modal">Close
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm"
+                            style="width: 50px" id="confirmEdit">Edit
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="/admin.js">
 </script>
