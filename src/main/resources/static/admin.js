@@ -18,7 +18,7 @@ async function loadCurrentUser() {
     }
 }
 
-// Загружаем данные при старте
+
 document.addEventListener('DOMContentLoaded', loadCurrentUser);
 
 
@@ -45,8 +45,8 @@ async function handleAction(action, userId, userData) {
 
         const rolesSelectEdit = document.getElementById('editRoles');
         rolesSelectEdit.innerHTML = ''; // Очищаем предыдущие значения
-
-        const response = await fetch('/api/admin/roles'); // Правильный endpoint для ролей
+        document.getElementById('newPassword').value = '';
+        const response = await fetch('/api/admin/roles');
         const roles = await response.json();
 
         roles.forEach(role => {
@@ -67,7 +67,7 @@ async function handleAction(action, userId, userData) {
     } else if (action === 'Delete') {
         currentUserId = userId;
 
-        // Заполняем модальное окно данными
+        // данные в модальное окно
         document.getElementById('deleteUserId').value = userId;
         document.getElementById('deleteFirstName').value = userData.firstName;
         document.getElementById('deleteLastName').value = userData.lastName;
@@ -80,10 +80,9 @@ async function handleAction(action, userId, userData) {
         userData.roles.forEach(role => {
             const option = document.createElement('option');
             option.value = role.name; // Значение опции
-            option.textContent = role.name.replace('ROLE_', ''); // Отображаемый текст
+            option.textContent = role.name.replace('ROLE_', '');
             rolesSelect.appendChild(option);
         });
-        // Показываем модальное окно
         deleteModal.show();
     }
 }
@@ -94,7 +93,7 @@ function createActionCell(action, userId, userData) {
     const button = document.createElement('button');
     button.className = `btn btn-${action === 'Edit' ? 'primary' : 'danger'} btn-sm`;
     button.textContent = action;
-    button.onclick = () => handleAction(action, userId, userData); // Передаем userData
+    button.onclick = () => handleAction(action, userId, userData);
     td.appendChild(button);
     return td;
 }
@@ -107,7 +106,7 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
         });
         if (!response.ok) throw new Error('Ошибка удаления');
         deleteModal.hide();
-        await loadAllUsers(); // Перезагружаем данные
+        await loadAllUsers();
     } catch (error) {
         console.error('Ошибка:', error);
         alert('Не удалось удалить пользователя');
@@ -126,7 +125,7 @@ document.getElementById('confirmEdit').addEventListener('click', async (e) => {
             username: document.getElementById('editUsername').value,
             password: newPassword || undefined,
             roles: Array.from(document.getElementById('editRoles').selectedOptions)
-                .map(option => ({id: parseInt(option.dataset.roleId)})) // Отправляем id ролей
+                .map(option => ({id: parseInt(option.dataset.roleId)}))
         };
 
         const currentUserResponse = await fetch('/api/admin/me');
@@ -138,18 +137,18 @@ document.getElementById('confirmEdit').addEventListener('click', async (e) => {
             body: JSON.stringify(updatedUser)
         });
 
+        const usernameChanged = currentUser.username !== updatedUser.username;
         if (currentUser.id === currentUserEditId) {
-            // Проверяем изменения
-            const usernameChanged = currentUser.username !== updatedUser.username;
-            const rolesChanged = !arraysEqual(
-                currentUser.roles.map(r => r.id),
-                updatedUser.roles.map(r => r.id)
-            );
-
-            if (usernameChanged || rolesChanged) {
-                // Перенаправляем на страницу входа
+            // проверка на роль пользователя
+            const hasOnlyUserRole = updatedUser.roles.length === 1 &&
+                updatedUser.roles[0].id === 2;
+            if (hasOnlyUserRole) {
                 window.location.href = '/login';
-                return; // Прерываем выполнение
+                return;
+            }
+            if (usernameChanged) {
+                window.location.href = '/login';
+                return;
             }
         }
 
@@ -159,13 +158,9 @@ document.getElementById('confirmEdit').addEventListener('click', async (e) => {
         await loadCurrentUser();
     } catch (error) {
         console.error('Ошибка:', error);
-        alert('Не удалось изменить пользователя: ' + error.message);
+        alert('Не удалось изменить пользователя: пустое поле это плохо');
     }
 });
-
-function arraysEqual(a, b) {
-    return a.length === b.length && a.every((val, index) => val === b[index]);
-}
 
 // Функция загрузки пользователей
 async function loadAllUsers() {
@@ -210,44 +205,6 @@ document.getElementById('newUser').addEventListener('click', async (e) => {
             el.classList.remove('is-invalid');
         });
 
-        // 2. Проверка полей
-        const fieldsToValidate = [
-            {id: 'firstName', message: 'Введите имя'},
-            {id: 'lastName', message: 'Введите фамилию'},
-            {id: 'age', message: 'Введите возраст'},
-            {id: 'email', message: 'Введите email'},
-            {id: 'password', message: 'Введите пароль'},
-            {id: 'addRoles', message: 'Выберите хотя бы одну роль'}
-        ];
-
-        let isValid = true;
-
-        for (const field of fieldsToValidate) {
-            const element = document.getElementById(field.id);
-            const value = element.value.trim();
-
-            // Специальная проверка для select multiple
-            if (field.id === 'addRoles') {
-                const selectedOptions = element.selectedOptions;
-                if (selectedOptions.length === 0) {
-                    isValid = false;
-                    element.closest('.form-floating').classList.add('is-invalid');
-                }
-                continue;
-            }
-
-            // Проверка для остальных полей
-            if (!value) {
-                isValid = false;
-                element.classList.add('is-invalid');
-                element.parentElement.insertAdjacentHTML('afterend',
-                    `<div class="invalid-feedback">${field.message}</div>`);
-            }
-        }
-
-        if (!isValid) {
-            throw new Error('Заполните все обязательные поля');
-        }
 
         const newUser = {
             firstName: document.getElementById('firstName').value,
@@ -277,7 +234,7 @@ document.getElementById('newUser').addEventListener('click', async (e) => {
 
     } catch (error) {
         console.error('Ошибка:', error);
-        alert('Не удалось добавить пользователя: ' + error.message);
+        alert('Не удалось добавить пользователя: пустое поле это плохо (без ролей можно)');
     }
 });
 

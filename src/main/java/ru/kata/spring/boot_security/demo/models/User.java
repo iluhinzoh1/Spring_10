@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -19,18 +21,23 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Username is required")
     @Column(nullable = false, unique = true)
     private String username;
 
+    @NotBlank(message = "password is required")
     @Column(nullable = false)
     private String password;
 
+    @NotBlank(message = "firstname is required")
     @Column(nullable = false)
     private String firstName;
 
+    @NotBlank(message = "lastname is required")
     @Column(nullable = false)
     private String lastName;
 
+    @NotNull(message = "age is null")
     @Column(nullable = false)
     private int age;
 
@@ -40,6 +47,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+
     private Set<Role> roles = new HashSet<>();
 
     @Override

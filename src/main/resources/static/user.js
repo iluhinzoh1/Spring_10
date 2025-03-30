@@ -29,7 +29,6 @@ async function loadUser2() {
         const tbody2 = document.getElementById('tbody2');
         tbody2.innerHTML = ''; // Очищаем таблицу
 
-        // Создаем строку только для одного пользователя
         const tr2 = document.createElement('tr');
         tr2.innerHTML = `
             <td>${userData.id}</td>
