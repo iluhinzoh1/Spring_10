@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +23,10 @@ public class UserController {
         this.userServiceImp = userServiceImp;
     }
 
-    @GetMapping
-    public String showUser(Principal principal, Model model) {
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
         User user = userServiceImp.findByUserName(principal.getName());
-        model.addAttribute("userShow", user);
-        return "user";
+        return ResponseEntity.ok(user);
     }
+
 }

@@ -14,6 +14,7 @@ import ru.kata.spring.boot_security.demo.services.UserServiceImp;
 
 import java.security.Principal;
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -75,16 +76,14 @@ public class AdminController {
         }
 
         User savedUser = userServiceImp.updateUser(existingUser, updatedUser.getPassword());
-
-        // Обновляем контекст безопасности
-        if (principal.getName().equals(savedUser.getUsername())) {
+        if (principal.getName().equals(existingUser.getUsername())) {
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     savedUser, savedUser.getPassword(), savedUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
-
         return ResponseEntity.ok(savedUser);
     }
+
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
         return ResponseEntity.ok(roleServiceImp.getAllRoles());

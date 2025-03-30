@@ -165,11 +165,8 @@
 
 <div class="top-bar">
     <div class="text">
-        <h4 style="font-weight: bold" th:text="${userShow.username}"></h4>
-        <h4>with roles:
-            <span th:each="role : ${userShow.authorities}"
-                  th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
-        </h4>
+        <h4 style="font-weight: bold" id="currentUsername"></h4>
+        <h4>with roles: <span id="currentRoles"></span></h4>
     </div>
     <div class="buttonLog">
         <input type="button" value="Logout" onclick="window.location.href = '/login'">
@@ -207,18 +204,8 @@
                             <th scope="col">Role</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td th:text="${userShow.id}"></td>
-                            <td th:text="${userShow.firstName}"></td>
-                            <td th:text="${userShow.lastName}"></td>
-                            <td th:text="${userShow.age}"></td>
-                            <td th:text="${userShow.username}"></td>
-                            <td>
-                        <span th:each="role : ${userShow.authorities}"
-                              th:text="${#strings.replace(role.authority, 'ROLE_', '')} + ' '"></span>
-                            </td>
-                        </tr>
+                        <tbody id="tbody2">
+
                         </tbody>
                     </table>
                 </div>
@@ -226,5 +213,7 @@
         </div>
     </div>
 </div>
+<script src="/user.js">
+</script>
 </body>
 </html>

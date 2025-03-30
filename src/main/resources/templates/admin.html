@@ -167,6 +167,7 @@
         <input type="button" value="Logout" onclick="window.location.href = '/login'">
     </div>
 </div>
+
 <div class="tabs-container">
 
     <input type="radio" id="tab1" name="tabs" checked>
@@ -231,7 +232,64 @@
                         <div class="container-fluid">
                             <div class="row justify-content-center" style="margin-right: 38px;">
                                 <div class="col-md-12 p-4 bg-white border">
+                                    <form class="w-100 mx-auto" style="max-width: 400px; text-align: center"
+                                          onsubmit="event.preventDefault()">
 
+                                        <div class="mb-3">
+                                            <h5 for="firstName" class="form-label">First Name</h5>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="firstName"
+                                                   placeholder="your name" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h5 for="lastName" class="form-label">Last Name</h5>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="lastName"
+                                                   placeholder="your surname" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h5 for="age" class="form-label">Age</h5>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="age"
+                                                   placeholder="your age" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h5 for="email" class="form-label">Email</h5>
+                                            <input type="email"
+                                                   class="form-control"
+                                                   id="email"
+                                                   placeholder="example@mail.com" required>
+                                        </div>
+
+                                        <!-- Password -->
+                                        <div class="mb-3">
+                                            <h5 for="password" class="form-label">Password</h5>
+                                            <input type="password"
+                                                   class="form-control"
+                                                   id="password"
+                                                   placeholder="Введите пароль" required>
+                                        </div>
+
+                                        <!-- Role -->
+                                        <div class="form-floating mb-3">
+                                            <h5>Roles</h5>
+                                            <select class="form-select" name="roles" multiple id="addRoles" required>
+                                            </select>
+                                        </div>
+
+                                        <!-- Кнопка по центру -->
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-success btn-lg" id="newUser">Add new
+                                                user
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -265,17 +323,17 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Delete User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
                 <div class="modal-body">
+                    <div class="modal-body">
 
                         <div class="form-floating mb-3">
                             <h5>ID</h5>
@@ -300,7 +358,7 @@
                             <h5>Age</h5>
                             <input type="number" class="form-control" name="age"
                                    placeholder="age" id="deleteAge"
-                                   th:max="100" disabled>
+                                   disabled>
                         </div>
 
                         <div class="form-floating mb-3">
@@ -315,83 +373,84 @@
                             </select>
                         </div>
 
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="editModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit User</h5>
-                <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-floating mb-3">
-                        <h5>ID</h5>
-                        <input type="text" class="form-control" id="editUserId" disabled readonly>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <h5>First Name</h5>
-                        <input type="text" class="form-control" name="firstName"
-                               placeholder="firstName"
-                               id="editFirstName" required>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <h5>Last Name</h5>
-                        <input type="text" class="form-control" name="lastName"
-                               placeholder="lastName"
-                               id="editLastName" required>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <h5>Age</h5>
-                        <input type="number" class="form-control" name="age"
-                               placeholder="age" id="editAge" required>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <h5>Email</h5>
-                        <input type="text" class="form-control" name="username" id="editUsername" required>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <h5>New Password:</h5>
-                        <input type="password" id="newPassword"
-                               name="newPassword"
-                               class="form-control">
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <h5>Roles</h5>
-                        <select class="form-select" name="roles" multiple id="editRoles">
-                        </select>
-                    </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm"
-                            data-bs-dismiss="modal">Close
-                    </button>
-                    <button type="submit" class="btn btn-primary btn-sm"
-                            style="width: 50px" id="confirmEdit">Edit
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
                 </div>
-                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-floating mb-3">
+                            <h5>ID</h5>
+                            <input type="text" class="form-control" id="editUserId" disabled readonly>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <h5>First Name</h5>
+                            <input type="text" class="form-control" name="firstName"
+                                   placeholder="firstName"
+                                   id="editFirstName" required>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <h5>Last Name</h5>
+                            <input type="text" class="form-control" name="lastName"
+                                   placeholder="lastName"
+                                   id="editLastName" required>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <h5>Age</h5>
+                            <input type="number" class="form-control" name="age"
+                                   placeholder="age" id="editAge" required>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <h5>Email</h5>
+                            <input type="text" class="form-control" name="username" id="editUsername" required>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <h5>New Password:</h5>
+                            <input type="password" id="newPassword"
+                                   name="newPassword"
+                                   class="form-control">
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <h5>Roles</h5>
+                            <select class="form-select" name="roles" multiple id="editRoles">
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    data-bs-dismiss="modal">Close
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-sm"
+                                    style="width: 50px" id="confirmEdit">Edit
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<script src="/admin.js">
-</script>
+    <script src="/admin.js">
+    </script>
 </body>
 </html>
